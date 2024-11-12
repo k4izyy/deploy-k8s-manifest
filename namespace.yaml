@@ -1,0 +1,5 @@
+# Creating a namespace to isolate resources for exercise-02
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: exercise02

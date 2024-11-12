@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: beetroot-service            
+  namespace: exercise02                  
+spec:
+  type: ClusterIP         # Changed from NodePort to ClusterIP internal-only access for reverse proxy setup
+  selector:
+    app: beetroot         # Connects the service to the "app: beetroot" deployment pods
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080              
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beetroot-deploy        
+  namespace: exercise02                  
+  annotations:
+    project: "IKT210 Exercise 02"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: beetroot                      
+  template:
+    metadata:
+      labels:
+        app: beetroot
+    spec:
+      containers:
+      - name: beetroot-container        
+        image: registry.internal.uia.no/ikt210-g-24h-skyinfrastruktur/labgroup27/exercise-02-deploy-your-first-k8s-manifest:latest
+        ports:
+        - containerPort: 8080           # Port inside the container that the service will access
+        livenessProbe:                  # Optional: configuring liveness Probe
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:                 # Optional: configuring readiness Probe
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 15
+      imagePullSecrets:
+      - name: gitlab-regcred

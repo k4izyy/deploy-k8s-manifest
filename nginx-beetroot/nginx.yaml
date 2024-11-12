@@ -1,0 +1,85 @@
+# Service to expose NGINX reverse proxy
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+  namespace: exercise02
+  labels:
+    app: nginx
+spec:
+  selector:
+    app: nginx-rev-prox
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-reverse-proxy
+  namespace: exercise02
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx-rev-prox
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        volumeMounts:
+        - name: nginx-rev-prox
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      volumes:
+      - name: nginx-rev-prox
+        configMap:
+          name: conf-map-nginx
+---
+# ConfigMap for NGINX configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: conf-map-nginx
+  namespace: exercise02
+  labels:
+    app: nginx
+data:
+  nginx.conf: |
+    events {}
+    http {
+      server {
+        listen 80;
+        
+        location / {
+          # Proxy settings to direct traffic to the Beetroot service
+          proxy_pass http://beetroot-service.exercise02.svc.cluster.local:80;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+      }
+    }
