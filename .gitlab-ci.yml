@@ -1,0 +1,11 @@
+docker_image_build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: ["/kaniko/executor"]
+  variables:
+    DOCKER_CONTEXT: "${CI_PROJECT_DIR}"
+    DOCKERFILE_PATH: "${CI_PROJECT_DIR}/Dockerfile"
+    IMAGE_DESTINATION: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+  script:
+    - "$CI_ENTRYPOINT --context $DOCKER_CONTEXT --dockerfile $DOCKERFILE_PATH --destination $IMAGE_DESTINATION"
