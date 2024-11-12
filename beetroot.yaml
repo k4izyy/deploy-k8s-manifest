@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: beetroot-container        
-        image: registry.internal.uia.no/ikt210-g-24h-skyinfrastruktur/labgroup27/exercise-02-deploy-your-first-k8s-manifest:latest
+        image: registry.internal.uia.no/ikt210-g-24h-skyinfrastruktur/labgroup27/exercise-02-deploy-your-first-k8s-manifest
         ports:
         - containerPort: 8080           # Port inside the container that the service will access
         livenessProbe:                  # Optional: configuring liveness Probe

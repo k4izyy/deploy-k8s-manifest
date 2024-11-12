@@ -89,13 +89,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /dashboard/
-              port: 8080
+              port: 80
             initialDelaySeconds: 10
             periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /dashboard/
-              port: 8080
+              port: 80
             initialDelaySeconds: 5
             periodSeconds: 10
 
