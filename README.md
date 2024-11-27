@@ -15,7 +15,7 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.internal.uia.no/ikt210-g-24h-skyinfrastruktur/LabGroup27/exercise-02-deploy-your-first-k8s-manifest.git
+git remote add origin <github URL>
 git branch -M main
 git push -uf origin main
 ```
